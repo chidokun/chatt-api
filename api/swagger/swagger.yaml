@@ -585,7 +585,7 @@ definitions:
         type: number
       user:
         type: string
-      lastedMsgId:
+      latestMsgId:
         type: number
       currMsgId:
         type: number
@@ -605,7 +605,7 @@ definitions:
     properties:
       channel:
         type: string
-      lastedMsgId:
+      latestMsgId:
         type: number
       currMsgId:
         type: number
