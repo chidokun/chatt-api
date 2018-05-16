@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
-  title: Hello World App
+  version: "1.0.0"
+  title: Chatt API
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths 
@@ -14,47 +14,630 @@ schemes:
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
+  - application/octet-stream
 # format of the responses to the client (Accepts)
 produces:
   - application/json
 paths:
-  /hello:
+  /users:
     # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
+    x-swagger-router-controller: users
     get:
-      description: Returns 'Hello' to the caller
+      description: Get existence of user
       # used as the method name of the controller
-      operationId: hello
+      operationId: get_users
       parameters:
-        - name: name
+        - name: user
           in: query
-          description: The name of the person to whom to say hello
-          required: false
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
           type: string
       responses:
         "200":
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/HelloWorldResponse"
+            $ref: "#/definitions/UserExistence"
         # responses may fall through to errors
         default:
           description: Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: "#/definitions/Response"
+    post:
+      description: Insert new user
+      # used as the method name of the controller
+      operationId: post_users
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: Password in SHA256
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+  /users/login:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: users
+    get:
+      description: Login and get token for user
+      # used as the method name of the controller
+      operationId: login
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: Password in SHA256
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/User"
+        # responses may fall through to errors
+        "400":
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+            
+  /users/logout:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: users
+    get:
+      description: Login and get token for user
+      # used as the method name of the controller
+      operationId: logout
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+            
+  /conversations:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: conversations
+    get:
+      description: Get all conversation of user
+      # used as the method name of the controller
+      operationId: get_conversations
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ListConversation"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      description: Create new conversation with a specific user
+      # used as the method name of the controller
+      operationId: post_conversations
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: toUser
+          in: query
+          description: To user
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+  /conversations/{conId}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: conversations
+    get:
+      description: Get all messages in conversation between **fromUser** and **user** within 1 days 
+      # used as the method name of the controller
+      operationId: get_conversation
+      parameters:
+        - name: conId
+          in: path
+          description: Conversation id
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ListConversationChat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      description: Chat to a conversation
+      # used as the method name of the controller
+      operationId: post_conversation
+      parameters:
+        - name: conId
+          in: path
+          description: Conversation Id
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: time
+          in: query
+          description: Message time
+          required: true
+          type: number
+        - name: message
+          in: query
+          description: Message
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    put:
+      description: Update reading status
+      # used as the method name of the controller
+      operationId: put_conversation
+      parameters:
+        - name: conId
+          in: path
+          description: Conversation Id
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+  
+  /channels:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: channels
+    get:
+      description: Get all channels that user join
+      # used as the method name of the controller
+      operationId: get_channels
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ListChannels"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      description: Create new channel
+      # used as the method name of the controller
+      operationId: post_channels
+      parameters:
+        - name: channel
+          in: query
+          description: Channel name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    put:
+      description: If channel exists, take a user into that channel. If channel does not exist, create the new one and then take a user into that.
+      # used as the method name of the controller
+      operationId: put_channels
+      parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: channel
+          in: query
+          description: Channel name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+            
+  /channels/{channel}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: channels
+    get:
+      description: Get all messages in **channel** within 1 days 
+      # used as the method name of the controller
+      operationId: get_channel
+      parameters:
+        - name: channel
+          in: path
+          description: Channel name
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ListChannelChat"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    post:
+      description: Chat to a channel
+      # used as the method name of the controller
+      operationId: post_channel
+      parameters:
+        - name: channel
+          in: path
+          description: Channel name
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: time
+          in: query
+          description: Message time
+          required: true
+          type: integer
+        - name: message
+          in: query
+          description: Message
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    put:
+      description: Update reading status
+      # used as the method name of the controller
+      operationId: put_channel
+      parameters:
+        - name: channel
+          in: path
+          description: Channel name
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    patch:
+      description: Take a user into a channel
+      # used as the method name of the controller
+      operationId: patch_channel
+      parameters:
+        - name: channel
+          in: path
+          description: Channel name
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
+    delete:
+      description: User exit from a channel
+      # used as the method name of the controller
+      operationId: delete_channel
+      parameters:
+        - name: channel
+          in: path
+          description: Channel name
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
+        - name: token
+          in: query
+          description: Token that user uses to access API
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/Response"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/Response"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
-  HelloWorldResponse:
-    required:
-      - message
+  ChannelChat:
     properties:
+      msgId: 
+        type: number
+      user:
+        type: string
+      time:
+        type: number
       message:
         type: string
-  ErrorResponse:
-    required:
-      - message
+  ConversationChat:
+    properties:
+      msgId:
+        type: number
+      user:
+        type: string
+      time:
+        type: number
+      message:
+        type: string
+  ConversationInfo:
+    properties:
+      conId:
+        type: number
+      user:
+        type: string
+      lastedMsgId:
+        type: number
+      currMsgId:
+        type: number
+  ListChannelChat:
+    properties:
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/ChannelChat"      
+  ListConversationChat:
+    properties:
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/ConversationChat"
+  ChannelInfo:
+    properties:
+      channel:
+        type: string
+      lastedMsgId:
+        type: number
+      currMsgId:
+        type: number
+  User:
+    properties:
+      user:
+        type: string
+      expire:
+        type: number
+      token:
+        type: string
+  UserExistence:
+    properties:
+      user:
+        type: string
+      exists:
+        type: boolean
+  ListConversation:
+    properties:
+      list:
+        type: array
+        items:
+          $ref: "#/definitions/ConversationInfo"
+  ListChannels:
+    properties:
+      user:
+        type: string
+      channels:
+        type: array
+        items:
+          $ref: "#/definitions/ChannelInfo"
+  Response:
     properties:
       message:
         type: string
