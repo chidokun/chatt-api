@@ -1,0 +1,25 @@
+{
+  "name": "chatt-api",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Chatt API for Chatt App",
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "main": "app.js",
+  "dependencies": {
+    "hapi": "^10.0.0",
+    "jsonwebtoken": "^8.2.1",
+    "level-rocksdb": "^2.0.0",
+    "swagger-hapi": "^0.1.0",
+    "websocket": "^1.0.26"
+  },
+  "devDependencies": {
+    "should": "^7.1.0",
+    "supertest": "^1.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "swagger project test"
+  }
+}
