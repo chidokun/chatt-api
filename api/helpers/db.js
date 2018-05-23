@@ -11,9 +11,11 @@ module.exports = {
 
 get('con.latestConId', (err, value) => {
     if (err) {
-        putSync('con.latestConId', 0);
+        putSync('con.latestConId', '0');
     }
 })
+
+put('u.tuan', '123');
 
 function get(name, callback) {
     db.get(name, function (err, value) {

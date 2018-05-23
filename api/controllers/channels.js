@@ -14,57 +14,73 @@ module.exports = {
 };
 
 function getAllChannels(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-
-    // res.json(hello);
+    res.json({
+        user: 'abc',
+        channels: [
+            {
+                channel: 'dfhd',
+                latestMsgId: '12',
+                currMsgId: '11'
+            },
+            {
+                channel: 'dfhdee',
+                latestMsgId: '12',
+                currMsgId: '11'
+            },
+            {
+                channel: 'fgvcd',
+                latestMsgId: '12',
+                currMsgId: '11'
+            }
+        ]
+    })
 }
 
 function createNewChannel(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'Create new channel' });
 }
 
 function putChannels(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'join or create new channel' });
 }
 
 function getAllChannelMessage(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({
+        list: [
+            {
+                msgId: '1',
+                user: 'abcd',
+                time: 12234234,
+                message: 'Hello, my name abc'
+            },
+            {
+                msgId: '2',
+                user: 'abcde',
+                time: 12234234,
+                message: 'Hello, my name abcfgdfsbgf'
+            },
+            {
+                msgId: '3',
+                user: 'abcd',
+                time: 12234234,
+                message: 'Helbdbdgfbdgfme abc'
+            }
+        ]
+    });
 }
 
 function chatToChannel(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'Chat to channel' });
 }
 
 function updateChannelReadingStatus(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'Update reading status' });
 }
 
 function joinChannel(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'join channel' });
 }
 
 function exitChannel(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
+    res.json({ message: 'Exit a channel' });
 }

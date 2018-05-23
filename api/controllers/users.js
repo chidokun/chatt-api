@@ -12,20 +12,25 @@ module.exports = {
 };
 
 function existenceUser(req, res) {
-    var user = req.swagger.params.user.value;
-    var token = req.swagger.params.token.value;
-    var check = checkToken(token);
+    // var user = req.swagger.params.user.value;
+    // var token = req.swagger.params.token.value;
+    // var check = checkToken(token);
 
-    if (check.isValid && !check.isExpired) {
-        get(`u.${user}`, (err, value) => {
-            res.json({
-                user: user,
-                exists: !err && value != ''
-            });
-        });
-    } else {
-        res.json({ message: 'Token is invalid or expired' });
-    }
+    // if (check.isValid && !check.isExpired) {
+    //     get(`u.${user}`, (err, value) => {
+    //         res.json({
+    //             user: user,
+    //             exists: !err && value != ''
+    //         });
+    //     });
+    // } else {
+    //     res.json({ message: 'Token is invalid or expired' });
+    // }
+
+    res.json({
+        user: 'abc',
+        exists: true
+    })
 }
 
 function signUp(req, res) {
@@ -38,10 +43,9 @@ function signUp(req, res) {
         putSync(`u.${user}.con`, '');
         putSync(`u.${user}.u`, '');
 
-        res.json({ message: 'Sign up successfully' });
+        res.json({ status: 200, message: 'Sign up successfully' });
     } catch {
-        res.status(400);
-        res.json({ message: 'Sign up unsuccessfully' });
+        res.json({ status: 400, message: 'Sign up unsuccessfully' });
     } 
 }
 
@@ -53,13 +57,13 @@ function login(req, res) {
         if (!err && value == password) {
             var token = generateToken(user);
             res.json({
+                status: 200,
                 user: user,
                 expire: Date.now() + 2592000000,
                 token: token
             });
         } else {
-            res.status(400);
-            res.json({ message: 'User name or password is not correct'});
+            res.json({ status: 400, message: 'User name or password is not correct'});
         }
     });    
 }

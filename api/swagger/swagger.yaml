@@ -591,12 +591,16 @@ definitions:
         type: number
   ListChannelChat:
     properties:
+      status:
+        type: integer
       list:
         type: array
         items:
           $ref: "#/definitions/ChannelChat"      
   ListConversationChat:
     properties:
+      status:
+        type: integer
       list:
         type: array
         items:
@@ -611,6 +615,8 @@ definitions:
         type: number
   User:
     properties:
+      status:
+        type: integer
       user:
         type: string
       expire:
@@ -619,18 +625,24 @@ definitions:
         type: string
   UserExistence:
     properties:
+      status:
+        type: integer
       user:
         type: string
       exists:
         type: boolean
   ListConversation:
     properties:
+      status:
+        type: integer
       list:
         type: array
         items:
           $ref: "#/definitions/ConversationInfo"
   ListChannels:
     properties:
+      status:
+        type: integer
       user:
         type: string
       channels:
@@ -639,5 +651,7 @@ definitions:
           $ref: "#/definitions/ChannelInfo"
   Response:
     properties:
+      status:
+        type: integer
       message:
         type: string
