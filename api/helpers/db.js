@@ -1,5 +1,5 @@
-var level = require('level-rocksdb')
-var db = level('./db')
+var level = require('level-rocksdb');
+var db = level('./db');
 
 module.exports = {
   get,
@@ -7,15 +7,13 @@ module.exports = {
   getSync,
   putSync,
   delSync
-}
+};
 
 get('con.latestConId', (err, value) => {
     if (err) {
         putSync('con.latestConId', '0');
     }
-})
-
-put('u.tuan', '123');
+});
 
 function get(name, callback) {
     db.get(name, function (err, value) {

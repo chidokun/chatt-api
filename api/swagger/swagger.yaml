@@ -645,7 +645,7 @@ definitions:
         type: integer
       user:
         type: string
-      channels:
+      list:
         type: array
         items:
           $ref: "#/definitions/ChannelInfo"

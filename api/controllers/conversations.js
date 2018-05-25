@@ -31,6 +31,7 @@ function getAllConversations(req, res) {
     // }
 
     res.json({
+        status: 200,
         list: [
             {
                 conId: 1,
@@ -40,7 +41,7 @@ function getAllConversations(req, res) {
             },
             {
                 conId: 2,
-                user: 'bcd',
+                user: 'bcdd',
                 latestMsgId: 12,
                 currMsgId: 11
             },

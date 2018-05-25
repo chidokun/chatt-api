@@ -15,8 +15,9 @@ module.exports = {
 
 function getAllChannels(req, res) {
     res.json({
+        status: 200,
         user: 'abc',
-        channels: [
+        list: [
             {
                 channel: 'dfhd',
                 latestMsgId: 12,
@@ -46,21 +47,22 @@ function putChannels(req, res) {
 
 function getAllChannelMessage(req, res) {
     res.json({
+        status: 200,
         list: [
             {
-                msgId: '1',
+                msgId: 1,
                 user: 'abcd',
                 time: 12234234,
                 message: 'Hello, my name abc'
             },
             {
-                msgId: '2',
+                msgId: 2,
                 user: 'abcde',
                 time: 12234234,
                 message: 'Hello, my name abcfgdfsbgf'
             },
             {
-                msgId: '3',
+                msgId: 3,
                 user: 'abcd',
                 time: 12234234,
                 message: 'Helbdbdgfbdgfme abc'
