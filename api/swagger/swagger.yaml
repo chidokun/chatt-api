@@ -187,7 +187,7 @@ paths:
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/Response"
+            $ref: "#/definitions/NewConversation"
         # responses may fall through to errors
         default:
           description: Error
@@ -652,6 +652,14 @@ definitions:
   Response:
     properties:
       status:
+        type: integer
+      message:
+        type: string
+  NewConversation:
+    properties:
+      status:
+        type: integer
+      conId:
         type: integer
       message:
         type: string

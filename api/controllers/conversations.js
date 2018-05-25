@@ -5,15 +5,14 @@ const { get, getSync, putSync } = require('../helpers/db');
 const { checkToken } = require('../helpers/token');
 
 module.exports = {
-    get_conversations: getAllConversation,
+    get_conversations: getAllConversations,
     post_conversations: createNewConversation,
     get_conversation: getAllConversationMessage,
     post_conversation: chatToConversation,
     put_conversation: updateConversationReadingStatus
 };
 
-// on doing
-function getAllConversation(req, res) {
+function getAllConversations(req, res) {
     // var user = req.swagger.params.user.value;
     // var token = req.swagger.params.token.value;
     // var check = checkToken(token);
@@ -34,30 +33,27 @@ function getAllConversation(req, res) {
     res.json({
         list: [
             {
-                conId: '1',
+                conId: 1,
                 user: 'abc',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             },
             {
-                conId: '2',
+                conId: 2,
                 user: 'bcd',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             },
             {
-                conId: '2',
+                conId: 2,
                 user: 'bcd',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             }
         ]
     });
 }
 
-/**
- * 
- */
 function createNewConversation(req, res) {
     var user = req.swagger.params.user.value;
     var toUser = req.swagger.params.toUser.value;
@@ -74,7 +70,8 @@ function createNewConversation(req, res) {
                         putSync(`con.${currConId}.0`, '');
                         putSync(`con.${currConId}.u.${user}`, '0');
                         putSync(`con.${currConId}.u.${toUser}`, '0');
-                        res.json({ status: 200, message: 'Conversation has created successfully' });
+                        putSync('con.latestConId', currConId);
+                        res.json({ status: 200, conId: currConId, message: 'Conversation has created successfully' });
                     } else {
                         res.json({ status: 204, message: 'User does not exist' });
                     }
@@ -123,19 +120,19 @@ function getAllConversationMessage(req, res) {
     res.json({
         list: [
             {
-                msgId: '1',
+                msgId: 1,
                 user: 'abcd',
                 time: 12234234,
                 message: 'Hello, my name abc'
             },
             {
-                msgId: '2',
+                msgId: 2,
                 user: 'abcde',
                 time: 12234234,
                 message: 'Hello, my name abcfgdfsbgf'
             },
             {
-                msgId: '3',
+                msgId: 3,
                 user: 'abcd',
                 time: 12234234,
                 message: 'Helbdbdgfbdgfme abc'

@@ -19,18 +19,18 @@ function getAllChannels(req, res) {
         channels: [
             {
                 channel: 'dfhd',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             },
             {
                 channel: 'dfhdee',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             },
             {
                 channel: 'fgvcd',
-                latestMsgId: '12',
-                currMsgId: '11'
+                latestMsgId: 12,
+                currMsgId: 11
             }
         ]
     })
