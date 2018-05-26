@@ -10,7 +10,7 @@ function runSampleData() {
     put('u.thinh', '123');
     put('u.thinh.channels', 'zlpay');
     put('u.thinh.con', '1;4');
-    put('u.tuan.u', 'tuan;trung');
+    put('u.thinh.u', 'tuan;trung');
 
     put('u.trung', '123');
     put('u.trung.channels', 'kosocho');

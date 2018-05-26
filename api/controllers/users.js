@@ -12,25 +12,21 @@ module.exports = {
 };
 
 function existenceUser(req, res) {
-    // var user = req.swagger.params.user.value;
-    // var token = req.swagger.params.token.value;
-    // var check = checkToken(token);
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
 
-    // if (check.isValid && !check.isExpired) {
-    //     get(`u.${user}`, (err, value) => {
-    //         res.json({
-    //             user: user,
-    //             exists: !err && value != ''
-    //         });
-    //     });
-    // } else {
-    //     res.json({ message: 'Token is invalid or expired' });
-    // }
-
-    res.json({
-        user: 'abc',
-        exists: true
-    })
+    if (check.isValid && !check.isExpired) {
+        get(`u.${user}`, (err, value) => {
+            res.json({
+                status: 200,
+                user: user,
+                exists: !err && value != ''
+            });
+        });
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function signUp(req, res) {

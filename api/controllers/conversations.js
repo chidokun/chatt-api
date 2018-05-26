@@ -13,46 +13,43 @@ module.exports = {
 };
 
 function getAllConversations(req, res) {
-    // var user = req.swagger.params.user.value;
-    // var token = req.swagger.params.token.value;
-    // var check = checkToken(token);
-    // var listCon, listU;
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+    var listCon, listU, list = [];
 
-    // if (check.isValid && !check.isExpired) {
-    //     get(`u.${user}.con`, (err, value) => {
-    //         listCon = value.split(';');
-    //         get(`u.${user}.u`, (err, value) => {
-    //             listU = value.split(';');
-                        
-    //         });       
-    //     });
-    // } else {
-    //     res.json({ message: 'Token is invalid or expired' });
-    // }
-
-    res.json({
-        status: 200,
-        list: [
-            {
-                conId: 1,
-                user: 'abc',
-                latestMsgId: 12,
-                currMsgId: 11
-            },
-            {
-                conId: 2,
-                user: 'bcdd',
-                latestMsgId: 12,
-                currMsgId: 11
-            },
-            {
-                conId: 2,
-                user: 'bcd',
-                latestMsgId: 12,
-                currMsgId: 11
-            }
-        ]
-    });
+    if (check.isValid && !check.isExpired) {
+        get(`u.${user}.con`, (err, value) => {
+            listCon = value.split(';');
+            get(`u.${user}.u`, (err, value) => {
+                listU = value.split(';');
+                var getContent = (i, callback) => {
+                    if (i == listCon.length) {
+                        callback();
+                        return;
+                    }
+                    get(`con.${listCon[i]}.latestMsgId`, (err, value) => {
+                        var latestMsgId = parseInt(value);
+                        get(`con.${listCon[i]}.u.${user}`, (err, value) => {
+                            var currMsgId = parseInt(value);
+                            list.push({ 
+                                conId: parseInt(listCon[i]), 
+                                user: listU[i], 
+                                latestMsgId, 
+                                currMsgId
+                            });
+                            getContent(i + 1, callback);
+                        });
+                    });
+                };
+                getContent(0, () => {
+                    res.json({ status: 200, list});
+                });
+            });       
+        });
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function createNewConversation(req, res) {
@@ -68,7 +65,6 @@ function createNewConversation(req, res) {
                     if (!err && value != '') {
                         putSync(`con.${currConId}.u`, `${user};${toUser}`);
                         putSync(`con.${currConId}.latestMsgId`, `0`);
-                        putSync(`con.${currConId}.0`, '');
                         putSync(`con.${currConId}.u.${user}`, '0');
                         putSync(`con.${currConId}.u.${toUser}`, '0');
                         putSync('con.latestConId', currConId);
@@ -87,65 +83,74 @@ function createNewConversation(req, res) {
 }
 
 function getAllConversationMessage(req, res) {
-    // var conId = req.swagger.params.conId.value;
-    // var user = req.swagger.params.user.value;
-    // var token = req.swagger.params.token.value;
-    // var list = [];
+    var conId = req.swagger.params.conId.value;
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+    var list = [];
 
-    // if (check.isValid && !check.isExpired) {
-    //     get(`con.${conId}.latestMsgId`, (err, value) => {
-    //         var curr = parseInt(value);
-    //         var getMsg = (id) => {
-    //             get(`con.${conId}.${id}`, (err, value) => {
-    //                 var ar = value.split(';');
-    //                 list.push({
-    //                     msgId: id,
-    //                     user: ar[1],
-    //                     time: ar[0],
-    //                     message: ar[2]
-    //                 });
-    //                 if (curr - id <= 100 && id >= 0) {
-    //                     getMsg(id - 1);
-    //                 }
-    //             })
-    //         }
-    //         getMsg(curr);
-    //     });
-    //     res.json({
-    //         list: list
-    //     })
-    // } else {
-    //     res.json({ message: 'Token is invalid or expired' });
-    // }
-
-    res.json({
-        list: [
-            {
-                msgId: 1,
-                user: 'abcd',
-                time: 12234234,
-                message: 'Hello, my name abc'
-            },
-            {
-                msgId: 2,
-                user: 'abcde',
-                time: 12234234,
-                message: 'Hello, my name abcfgdfsbgf'
-            },
-            {
-                msgId: 3,
-                user: 'abcd',
-                time: 12234234,
-                message: 'Helbdbdgfbdgfme abc'
+    if (check.isValid && !check.isExpired) {
+        get(`con.${conId}.latestMsgId`, (err, value) => {
+            var curr = parseInt(value);
+            var getMsg = (i, callback) => {
+                if (i > curr) {
+                    callback();
+                    return;
+                }
+                get(`con.${conId}.${i}`, (err, value) => {
+                    var ar = value.split(';');
+                    list.push({
+                        msgId: i,
+                        user: ar[1],
+                        time: parseInt(ar[0]),
+                        message: ar[2]
+                    });
+                    getMsg(i + 1, callback);
+                })
             }
-        ]
-    });
+            getMsg(1, () => {
+                res.json({ status: 200, list });
+            });
+        });  
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function chatToConversation(req, res) {
-    res.json({ message: 'Chat to con' });
+    var conId = req.swagger.params.conId.value;
+    var user = req.swagger.params.user.value;
+    var time = req.swagger.params.time.value;
+    var message = req.swagger.params.message.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+
+    if (check.isValid && !check.isExpired) {
+        get(`con.${conId}.latestMsgId`, (err, value) => {
+            var latestMsgId = parseInt(value) + 1;
+            putSync(`con.${conId}.${latestMsgId}`, `${time};${user};${message}`);
+            putSync(`con.${conId}.latestMsgId`, latestMsgId);
+            putSync(`con.${conId}.u.${user}`, latestMsgId);
+            res.json({ status: 200, message: 'Send message successfully' });
+        });
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function updateConversationReadingStatus(req, res) {
-    res.json({ message: 'Update reading' });
+    var conId = req.swagger.params.conId.value;
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+
+    if (check.isValid && !check.isExpired) {
+        get(`con.${conId}.latestMsgId`, (err, value) => {
+            var latestMsgId = parseInt(value);
+            putSync(`con.${conId}.u.${user}`, latestMsgId);
+            res.json({ status: 200, message: 'Update reading status successfully' });
+        });   
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }

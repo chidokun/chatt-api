@@ -330,41 +330,10 @@ paths:
           schema:
             $ref: "#/definitions/Response"
     post:
-      description: Create new channel
+      description: If channel exists, take a user into that channel. If channel does not exist, create the new one and then take a user into that.
       # used as the method name of the controller
       operationId: post_channels
       parameters:
-        - name: channel
-          in: query
-          description: Channel name
-          required: true
-          type: string
-        - name: token
-          in: query
-          description: Token that user uses to access API
-          required: true
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            # a pointer to a definition
-            $ref: "#/definitions/Response"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/Response"
-    put:
-      description: If channel exists, take a user into that channel. If channel does not exist, create the new one and then take a user into that.
-      # used as the method name of the controller
-      operationId: put_channels
-      parameters:
-        - name: user
-          in: query
-          description: User name
-          required: true
-          type: string
         - name: channel
           in: query
           description: Channel name
@@ -466,37 +435,6 @@ paths:
       description: Update reading status
       # used as the method name of the controller
       operationId: put_channel
-      parameters:
-        - name: channel
-          in: path
-          description: Channel name
-          required: true
-          type: string
-        - name: user
-          in: query
-          description: User name
-          required: true
-          type: string
-        - name: token
-          in: query
-          description: Token that user uses to access API
-          required: true
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            # a pointer to a definition
-            $ref: "#/definitions/Response"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/Response"
-    patch:
-      description: Take a user into a channel
-      # used as the method name of the controller
-      operationId: patch_channel
       parameters:
         - name: channel
           in: path

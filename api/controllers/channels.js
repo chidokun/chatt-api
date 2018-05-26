@@ -1,86 +1,129 @@
 'use strict';
 
 var util = require('util');
+const { get, getSync, putSync } = require('../helpers/db');
+const { checkToken } = require('../helpers/token');
 
 module.exports = {
     get_channels: getAllChannels,
-    post_channels: createNewChannel,
-    put_channels: putChannels,
+    post_channels: createJoinChannel,
     get_channel: getAllChannelMessage,
     post_channel: chatToChannel,
     put_channel: updateChannelReadingStatus,
-    patch_channel: joinChannel,
     delete_channel: exitChannel
 };
 
 function getAllChannels(req, res) {
-    res.json({
-        status: 200,
-        user: 'abc',
-        list: [
-            {
-                channel: 'dfhd',
-                latestMsgId: 12,
-                currMsgId: 11
-            },
-            {
-                channel: 'dfhdee',
-                latestMsgId: 12,
-                currMsgId: 11
-            },
-            {
-                channel: 'fgvcd',
-                latestMsgId: 12,
-                currMsgId: 11
-            }
-        ]
-    })
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+    var listChannel, list = [];
+
+    if (check.isValid && !check.isExpired) {
+        get(`u.${user}.channels`, (err, value) => {
+            listChannel = value.split(';');
+            var getContent = (i, callback) => {
+                if (i == listChannel.length) {
+                    callback();
+                    return;
+                }
+                get(`chan.${listChannel[i]}.latestMsgId`, (err, value) => {
+                    var latestMsgId = parseInt(value);
+                    get(`chan.${listChannel[i]}.u.${user}`, (err, value) => {
+                        var currMsgId = parseInt(value);
+                        list.push({ 
+                            channel: listChannel[i], 
+                            latestMsgId, 
+                            currMsgId
+                        });
+                        getContent(i + 1, callback);
+                    });
+                });
+            };
+            getContent(0, () => {
+                res.json({ status: 200, user: user, list});
+            });       
+        });
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
-function createNewChannel(req, res) {
+function createJoinChannel(req, res) {
     res.json({ message: 'Create new channel' });
 }
 
-function putChannels(req, res) {
-    res.json({ message: 'join or create new channel' });
-}
-
 function getAllChannelMessage(req, res) {
-    res.json({
-        status: 200,
-        list: [
-            {
-                msgId: 1,
-                user: 'abcd',
-                time: 12234234,
-                message: 'Hello, my name abc'
-            },
-            {
-                msgId: 2,
-                user: 'abcde',
-                time: 12234234,
-                message: 'Hello, my name abcfgdfsbgf'
-            },
-            {
-                msgId: 3,
-                user: 'abcd',
-                time: 12234234,
-                message: 'Helbdbdgfbdgfme abc'
+    var channel = req.swagger.params.channel.value;
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+    var list = [];
+
+    if (check.isValid && !check.isExpired) {
+        get(`chan.${channel}.latestMsgId`, (err, value) => {
+            var curr = parseInt(value);
+            var getMsg = (i, callback) => {
+                if (i > curr) {
+                    callback();
+                    return;
+                }
+                get(`chan.${channel}.${i}`, (err, value) => {
+                    var ar = value.split(';');
+                    list.push({
+                        msgId: i,
+                        user: ar[1],
+                        time: parseInt(ar[0]),
+                        message: ar[2]
+                    });
+                    getMsg(i + 1, callback);
+                })
             }
-        ]
-    });
+            getMsg(1, () => {
+                res.json({ status: 200, list });
+            });
+        });  
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function chatToChannel(req, res) {
-    res.json({ message: 'Chat to channel' });
+    var channel = req.swagger.params.channel.value;
+    var user = req.swagger.params.user.value;
+    var time = req.swagger.params.time.value;
+    var message = req.swagger.params.message.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
+
+    if (check.isValid && !check.isExpired) {
+        get(`chan.${channel}.latestMsgId`, (err, value) => {
+            var latestMsgId = parseInt(value) + 1;
+            putSync(`chan.${channel}.${latestMsgId}`, `${time};${user};${message}`);
+            putSync(`chan.${channel}.latestMsgId`, latestMsgId);
+            putSync(`chan.${channel}.u.${user}`, latestMsgId);
+            res.json({ status: 200, message: 'Send message successfully' });
+        });
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function updateChannelReadingStatus(req, res) {
-    res.json({ message: 'Update reading status' });
-}
+    var channel = req.swagger.params.channel.value;
+    var user = req.swagger.params.user.value;
+    var token = req.swagger.params.token.value;
+    var check = checkToken(token);
 
-function joinChannel(req, res) {
-    res.json({ message: 'join channel' });
+    if (check.isValid && !check.isExpired) {
+        get(`chan.${channel}.latestMsgId`, (err, value) => {
+            var latestMsgId = parseInt(value);
+            putSync(`chan.${channel}.u.${user}`, latestMsgId);
+            res.json({ status: 200, message: 'Update reading status successfully' });
+        });   
+    } else {
+        res.json({ status: 400, message: 'Token is invalid or expired' });
+    }
 }
 
 function exitChannel(req, res) {
