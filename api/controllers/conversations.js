@@ -58,25 +58,33 @@ function createNewConversation(req, res) {
     var token = req.swagger.params.token.value;
     var check = checkToken(token);
     if (check.isValid && !check.isExpired) {
-        try {
-            get('con.latestConId', (err, value) => {
-                var currConId = parseInt(value) + 1;
-                get(`u.${user}`, (err, value) => {
-                    if (!err && value != '') {
-                        putSync(`con.${currConId}.u`, `${user};${toUser}`);
-                        putSync(`con.${currConId}.latestMsgId`, `0`);
-                        putSync(`con.${currConId}.u.${user}`, '0');
-                        putSync(`con.${currConId}.u.${toUser}`, '0');
-                        putSync('con.latestConId', currConId);
-                        res.json({ status: 200, conId: currConId, message: 'Conversation has created successfully' });
-                    } else {
-                        res.json({ status: 204, message: 'User does not exist' });
-                    }
+        get(`u.${toUser}`, (err, value) => {
+            if (!err) {
+                get('con.latestConId', (err, value) => {
+                    var currConId = parseInt(value) + 1;
+                    putSync(`con.${currConId}.u`, `${user};${toUser}`);
+                    putSync(`con.${currConId}.latestMsgId`, `0`);
+                    putSync(`con.${currConId}.u.${user}`, '0');
+                    putSync(`con.${currConId}.u.${toUser}`, '0');
+                    putSync('con.latestConId', currConId);
+                    get(`u.${user}.con`, (err, value) => {
+                        putSync(`u.${user}.con`, value != '' ? `${value};${currConId}` : `${currConId}`);
+                    });
+                    get(`u.${user}.u`, (err, value) => {
+                        putSync(`u.${user}.u`, value != '' ? `${value};${toUser}` : `${toUser}`);
+                    });
+                    get(`u.${toUser}.con`, (err, value) => {
+                        putSync(`u.${toUser}.con`, value != '' ? `${value};${currConId}` : `${currConId}`);
+                    });
+                    get(`u.${toUser}.u`, (err, value) => {
+                        putSync(`u.${toUser}.u`, value != '' ? `${value};${user}` : `${user}`);
+                    });
+                    res.json({ status: 200, conId: currConId, message: 'Conversation has created successfully' });
                 });
-            });
-        } catch {
-            res.json({ status: 400, message: 'Can not create new conversation' });
-        }      
+            } else {
+                res.json({ status: 400, message: 'User does not exist' });
+            }
+        });             
     } else {
         res.json({ status: 400, message: 'Token is invalid or expired' });
     }

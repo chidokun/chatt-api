@@ -9,11 +9,11 @@ module.exports = {
   delSync
 };
 
-get('con.latestConId', (err, value) => {
-    if (err) {
-        putSync('con.latestConId', '0');
-    }
-});
+// get('con.latestConId', (err, value) => {
+//     if (err) {
+//         putSync('con.latestConId', '0');
+//     }
+// });
 
 function get(name, callback) {
     db.get(name, function (err, value) {

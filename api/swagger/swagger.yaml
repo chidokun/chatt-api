@@ -334,6 +334,11 @@ paths:
       # used as the method name of the controller
       operationId: post_channels
       parameters:
+        - name: user
+          in: query
+          description: User name
+          required: true
+          type: string
         - name: channel
           in: query
           description: Channel name
@@ -349,7 +354,7 @@ paths:
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/Response"
+            $ref: "#/definitions/NewChannel"
         # responses may fall through to errors
         default:
           description: Error
@@ -435,37 +440,6 @@ paths:
       description: Update reading status
       # used as the method name of the controller
       operationId: put_channel
-      parameters:
-        - name: channel
-          in: path
-          description: Channel name
-          required: true
-          type: string
-        - name: user
-          in: query
-          description: User name
-          required: true
-          type: string
-        - name: token
-          in: query
-          description: Token that user uses to access API
-          required: true
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            # a pointer to a definition
-            $ref: "#/definitions/Response"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/Response"
-    delete:
-      description: User exit from a channel
-      # used as the method name of the controller
-      operationId: delete_channel
       parameters:
         - name: channel
           in: path
@@ -599,5 +573,13 @@ definitions:
         type: integer
       conId:
         type: integer
+      message:
+        type: string
+  NewChannel:
+    properties:
+      status:
+        type: integer
+      channel:
+        $ref: "#/definitions/ChannelInfo"
       message:
         type: string
