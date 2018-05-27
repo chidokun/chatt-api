@@ -3,6 +3,7 @@
 var SwaggerHapi = require('swagger-hapi');
 var Hapi = require('hapi');
 var app = new Hapi.Server();
+var socket = require('./api/socket');
 
 module.exports = app; // for testing
 

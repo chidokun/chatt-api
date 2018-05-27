@@ -102,37 +102,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/Response"
-            
-  /users/logout:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: users
-    get:
-      description: Login and get token for user
-      # used as the method name of the controller
-      operationId: logout
-      parameters:
-        - name: user
-          in: query
-          description: User name
-          required: true
-          type: string
-        - name: token
-          in: query
-          description: Token that user uses to access API
-          required: true
-          type: string
-      responses:
-        "200":
-          description: Success
-          schema:
-            # a pointer to a definition
-            $ref: "#/definitions/Response"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/Response"
-            
   /conversations:
     # binds a127 app logic to a route
     x-swagger-router-controller: conversations

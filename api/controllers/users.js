@@ -7,8 +7,7 @@ const { checkToken, generateToken } = require('../helpers/token');
 module.exports = {
     get_users: existenceUser,
     post_users: signUp,
-    login: login,
-    logout: logout
+    login: login
 };
 
 function existenceUser(req, res) {
@@ -62,11 +61,4 @@ function login(req, res) {
             res.json({ status: 400, message: 'User name or password is not correct'});
         }
     });    
-}
-
-function logout(req, res) {
-    // var name = req.swagger.params.name.value || 'stranger';
-    // var hello = util.format('Hello, %s!', name);
-  
-    // res.json(hello);
 }
