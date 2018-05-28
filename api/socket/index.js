@@ -11,14 +11,14 @@ var clients = [];
 
 var server = http.createServer();
 server.listen(port, function() {
-    console.log((new Date()) + "- Server is listening on port " + port);
+    console.log("[SOCKET] - Server is listening on port " + port);
 });
 
 var wsServer = new SocketServer({ httpServer: server});
 wsServer.on('request', function(request) {
-    console.log((new Date()) + '- Connection from origin ' + request.origin + '.');
+    console.log('[SOCKET] - Connection from origin ' + request.origin + '.');
     var connection = request.accept(null, request.origin); 
-    console.log((new Date()) + '- Connection accepted.');
+    console.log('[SOCKET] - Connection accepted.');
     var user;
 
     connection.on('message', function(message) {
@@ -30,9 +30,10 @@ wsServer.on('request', function(request) {
                     case 'CONNECT':
                         user = res.user;
                         clients[user] = connection;
-                        console.log(`[${user}] connected.`);
+                        console.log(`[SOCKET] - [${user}] connected.`);
                         break;
                     case 'MESSAGE_CHANNEL':
+                        console.log(`[SOCKET] - Message from [${res.params.user}] to [#${res.params.channel}]`);
                         get(`chan.${res.params.channel}.u`, (err, value) => {
                             var listU = value.split(';');
                             get(`chan.${res.params.channel}.latestMsgId`,(err,value) => {
@@ -53,6 +54,7 @@ wsServer.on('request', function(request) {
                                         get(`chan.${res.params.channel}.u.${e}`, (err, value) => {
                                             response.channel.currMsgId = parseInt(value);
                                             if (clients[e] != null) {
+                                                console.log(`[SOCKET] - Send message to [${e}]`);
                                                 clients[e].sendUTF(JSON.stringify(response));
                                             }            
                                         });         
@@ -62,6 +64,7 @@ wsServer.on('request', function(request) {
                         });
                         break;
                     case 'MESSAGE_CONVERSATION':
+                        console.log(`[SOCKET] - Message from [${res.params.user}]`);
                         get(`con.${res.params.conId}.u`, (err, value) => {
                             var listU = value.split(';');
                             get(`con.${res.params.conId}.latestMsgId`, (err,value) => {
@@ -70,7 +73,7 @@ wsServer.on('request', function(request) {
                                     type: 'MESSAGE_CONVERSATION',
                                     con: { 
                                         conId: res.params.conId,
-                                        user: destUser, 
+                                        user: res.params.user, 
                                         latestMsgId: parseInt(value)
                                     },
                                     message: {
@@ -82,6 +85,7 @@ wsServer.on('request', function(request) {
                                 get(`con.${res.params.conId}.u.${destUser}`, (err, value) => {
                                     response.con.currMsgId = parseInt(value);
                                     if (clients[destUser] != null) {
+                                        console.log(`[SOCKET] - Send message to [#${destUser}]`);
                                         clients[destUser].sendUTF(JSON.stringify(response));
                                     }
                                     
