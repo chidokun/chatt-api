@@ -2,22 +2,22 @@ var { putSync, get } = require('./db');
 
 function runSampleData() {
     // user
-    putSync('u.tuan', '123');
+    putSync('u.tuan', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=');
     putSync('u.tuan.channels', 'zlpay;kosocho');
     putSync('u.tuan.con', '1;2;3');
     putSync('u.tuan.u', 'thinh;trung;vu');
 
-    putSync('u.thinh', '123');
+    putSync('u.thinh', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=');
     putSync('u.thinh.channels', 'zlpay');
     putSync('u.thinh.con', '1;4');
     putSync('u.thinh.u', 'tuan;trung');
 
-    putSync('u.trung', '123');
+    putSync('u.trung', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=');
     putSync('u.trung.channels', 'kosocho');
     putSync('u.trung.con', '2;4');
     putSync('u.trung.u', 'tuan;thinh');
 
-    putSync('u.vu', '123');
+    putSync('u.vu', 'pmWkWSBCL51Bfkhn79xPuKBKHz//H6B+mY6G9/eieuM=');
     putSync('u.vu.channels', '');
     putSync('u.vu.con', '3');
     putSync('u.vu.u', 'tuan');

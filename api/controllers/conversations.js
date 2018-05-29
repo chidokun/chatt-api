@@ -61,7 +61,7 @@ function createNewConversation(req, res) {
         get(`u.${toUser}`, (err, value) => {
             if (!err) {
                 get('con.latestConId', (err, value) => {
-                    var currConId = parseInt(value) + 1;
+                    var currConId = (err ? 0 : parseInt(value)) + 1;
                     putSync(`con.${currConId}.u`, `${user};${toUser}`);
                     putSync(`con.${currConId}.latestMsgId`, `0`);
                     putSync(`con.${currConId}.u.${user}`, '0');
